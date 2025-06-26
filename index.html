@@ -1,10 +1,177 @@
-<form
-  action="https://YOUR-N8N-URL/webhook/upload-form"
-  method="post"
-  enctype="multipart/form-data"
->
-  <label>Your Email: <input type="email" name="email" required /></label><br />
-  <label>Your File: <input type="file" name="attachment" required /></label><br />
-  <label>Comments: <textarea name="comments"></textarea></label><br />
-  <button type="submit">Submit</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Talk with Jarvis</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f5f6fa;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      background: white;
+      overflow: hidden;
+    }
+    .chat-header {
+      padding: 16px;
+      font-size: 1.4em;
+      font-weight: bold;
+      text-align: center;
+      border-bottom: 1px solid #eee;
+      background: #ffffff;
+    }
+    .chat-messages {
+      flex-grow: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      max-width: 80%;
+      padding: 12px;
+      border-radius: 12px;
+      line-height: 1.4;
+    }
+    .user-message {
+      align-self: flex-end;
+      background-color: #355cc9;
+      color: white;
+    }
+    .bot-message {
+      align-self: flex-start;
+      background-color: #f1f2f6;
+      color: #333;
+    }
+    .file-preview {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    .file-preview span {
+      font-weight: 500;
+    }
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      border-top: 1px solid #ddd;
+      background: #fdfdfd;
+    }
+    .chat-input input[type="text"] {
+      flex-grow: 1;
+      padding: 10px 14px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+    .chat-input button,
+    .chat-input label {
+      background: #355cc9;
+      color: white;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .chat-input label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .chat-input input[type="file"] {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">Talk with Jarvis</div>
+    <div class="chat-messages" id="chatMessages">
+      <!-- Messages will appear here -->
+    </div>
+    <div class="chat-input">
+      <label for="fileUpload">+</label>
+      <input type="file" id="fileUpload" />
+      <input type="text" id="userInput" placeholder="Talk with Jarvis..." />
+      <button onclick="sendMessage()">→</button>
+    </div>
+  </div>
+
+  <script>
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const fileInput = document.getElementById('fileUpload');
+
+    function addMessage(text, isUser = true) {
+      const msg = document.createElement('div');
+      msg.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+      msg.textContent = text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addFilePreview(fileName) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'message bot-message';
+
+      const preview = document.createElement('div');
+      preview.className = 'file-preview';
+
+      preview.innerHTML = `<strong>📄 ${fileName}</strong><span>File received</span>`;
+      wrapper.appendChild(preview);
+      chatMessages.appendChild(wrapper);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (text) {
+        addMessage(text, true);
+        userInput.value = '';
+        
+        // Simulated bot response
+        setTimeout(() => {
+          addMessage("Here's a summary of your input: " + text, false);
+        }, 800);
+      }
+    }
+
+    fileInput.addEventListener('change', function () {
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        addFilePreview(file.name);
+
+        // Simulate bot response after upload
+        setTimeout(() => {
+          addMessage(`Received the file: "${file.name}". Generating summary...`, false);
+        }, 1000);
+      }
+    });
+
+    userInput.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+
+</body>
+</html>
